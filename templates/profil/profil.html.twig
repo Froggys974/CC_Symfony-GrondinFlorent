@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mx-auto p-8">
+    {% if isCurrentUser %}
+        <h1 class="text-3xl font-bold mb-6">My Profile</h1>
+        <p>Welcome to your profile, {{ user.username }}!</p>
+        <!-- Add more personalized content for the current user here -->
+    {% else %}
+        <h1 class="text-3xl font-bold mb-6">{{ user.username }}'s Profile</h1>
+        <p>Viewing the profile of {{ user.username }}.</p>
+        <!-- Add more content for viewing another user's profile here -->
+    {% endif %}
+</div>
+{% endblock %}

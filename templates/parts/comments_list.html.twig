@@ -1,0 +1,10 @@
+{% for comment in comments %}
+    <div class="flex items-center mt-2">
+        <img class="w-6 h-6 rounded-full mr-2" src="{{ comment.user.profilPicture }}" alt="{{ comment.user.username }}">
+        <div>
+            <p class="text-sm font-bold">{{ comment.user.username }}</p>
+            <p class="text-sm text-gray-600">{{ comment.content }}</p>
+            <p class="text-xs text-gray-400">{{ comment.createdAt|date('H:i, d M Y') }}</p>
+        </div>
+    </div>
+{% endfor %}

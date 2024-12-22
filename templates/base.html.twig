@@ -1,16 +1,49 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
 
-        {% block javascripts %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Challenge App
+			{% block title %}{% endblock %}
+		</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+
+
+
+	</head>
+	<body class="bg-gray-100">
+		{% if show_header is not defined or show_header %}
+				<header class="bg-blue-500 text-white p-4">
+					<div class="container mx-auto flex justify-between items-center">
+						<h1 class="text-2xl font-bold">ChallengeApp</h1>
+						<nav class="space-x-4">
+							<a href="{{ path('page_home') }}" class="hover:text-gray-200">Home</a>
+							
+							{# <a href="/challenges.html" class="hover:text-gray-200">Challenges</a> #}
+							<a href="{{ path('page_profil', {'id': app.user.id}) }}" class="hover:text-gray-200">Profile</a>
+							{% if app.user %}
+								<a href="{{ path('app_logout') }}" class="hover:text-gray-200">Logout</a>
+							{% else %}
+								<a href="{{ path('app_login') }}" class="hover:text-gray-200">Login</a>
+							{% endif %}
+							{% if is_granted('ROLE_ADMIN') %}
+								<a href="{{ path('admin_dashboard') }}" class="hover:text-gray-200">Admin</a>
+							{% endif %}
+						</nav>
+					</div>
+				</header>
+		{% endif %}
+		<main>
+			{% block body %}{% endblock %}
+		</main>
+		<footer class="bg-gray-800 text-white p-4 mt-8">
+			<div class="container mx-auto text-center">
+				&copy; 2024 ChallengeApp. All rights reserved Page :
+				{{ block('title') }}</div>
+		</footer>
+
+	</body>
 </html>

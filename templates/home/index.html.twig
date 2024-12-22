@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+{% block title %}Home{% endblock %}
+
+
+{% block body %}
+<div class="container mx-auto p-8">
+    <h1 class="text-3xl font-bold mb-6">News Feed</h1>
+
+    <div class="space-y-6">
+        {% for post in posts %}
+        {% include 'parts/post_card.html.twig' with { 'post': post } %}
+        {% endfor %}
+    </div>
+</div>
+<script>
+    document.querySelectorAll('.show-comments-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            document.querySelectorAll('.comments-section').forEach(section => {
+                if (section.id === 'comments-' + postId) {
+                    section.classList.toggle('hidden');
+                    if (!section.classList.contains('hidden')) {
+                        document.getElementById('post-' + postId).scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+                    }
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const postId = this.dataset.postId;
+            fetch(`/post/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-Token': '{{ csrf_token('like') }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Like added' || data.message === 'Like removed') {
+                    this.querySelector('.likes-count').textContent = data.likesCount;
+                    const svg = this.querySelector('svg');
+                    if (data.message === 'Like added') {
+                        svg.setAttribute('fill', 'red');
+                    } else {
+                        svg.setAttribute('fill', 'none');
+                    }
+                }
+            });
+        });
+    });
+
+    document.querySelectorAll('.comment-form').forEach(form => {
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const content = this.querySelector('textarea[name="content"]').value.trim();
+        if (!content || content.length > 500) {
+            alert("Comment content must be between 1 and 500 characters.");
+            return;
+        }
+
+        const postId = this.dataset.postId;
+        const formData = new FormData(this);
+
+        fetch(`/post/${postId}/comment`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const commentsList = document.querySelector(`#comments-${postId} .comments-list`);
+                const newComment = document.createElement('div');
+                newComment.classList.add('flex', 'items-center', 'mt-2');
+                newComment.innerHTML = `
+                    <img class="w-6 h-6 rounded-full mr-2" src="${data.comment.user.profilPicture}" alt="${data.comment.user.username}">
+                    <div>
+                        <p class="text-sm font-bold">${data.comment.user.username}</p>
+                        <p class="text-sm text-gray-600">${data.comment.content}</p>
+                        <p class="text-xs text-gray-400">${data.comment.createdAt}</p>
+                    </div>
+                `;
+                commentsList.appendChild(newComment);
+                this.reset();
+            } else {
+                alert(data.message);
+            }
+        });
+    });
+});
+
+</script>
+
+{% endblock %}

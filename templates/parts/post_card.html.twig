@@ -1,0 +1,22 @@
+<div class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition" id="post-{{ post.id }}">
+	<div class="flex items-center mb-4">
+		<a href="{{ path('page_profil', {'id': post.creator.id}) }}"><img class="w-10 h-10 rounded-full mr-4" src="{{ post.creator.profilPicture }}" alt="{{ post.creator.username }}"></a>
+		<div>
+			<a href="{{ path('page_profil', {'id': post.creator.id}) }}"<p class="font-bold">{{ post.creator.username }}</p></a>
+			<p class="text-sm text-gray-600">{{ post.createdAt|date('H:i, d M Y') }}</p>
+		</div>
+	</a>
+</div>
+<h2 class="text-xl font-bold mb-2">{{ post.content }}</h2>
+<div class="flex items-center justify-between">
+	{% include 'parts/like_button.html.twig' with {'post': post} %}
+	<button class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 show-comments-button" data-post-id="{{ post.id }}">Show Comments</button>
+</div>
+<div class="mt-4 comments-section hidden" id="comments-{{ post.id }}">
+	<p class="text-sm text-gray-600">{{ post.comments|length }}
+		Comments</p>
+	<div class="comments-list">
+		{% include 'parts/comments_list.html.twig' with {'comments': post.comments, 'postId': post.id} %}
+	</div>
+	{% include 'parts/comment_form.html.twig' with {'postId': post.id} %}
+</div></div>
